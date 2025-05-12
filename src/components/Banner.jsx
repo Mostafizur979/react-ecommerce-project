@@ -34,7 +34,7 @@ function Banner() {
     })
     return (
         <>
-            <div className="w-[90%] mx-auto grid  grid-cols-3">
+            <div className="w-[90%] mx-auto  grid  grid-cols-3 md:gap-[10px]">
                 <div className="col-span-3 md:col-span-2 max-h-[400px] rounded-[10px] overflow-hidden">
                     <Swiper
                         modules={[Navigation, Autoplay]}
@@ -55,12 +55,12 @@ function Banner() {
                         ))}
                     </Swiper>
                 </div>
-                <div className='col-span-3 pt-[20px] px-0 md:pt-0 md:col-span-1 md:px-[20px]'>
+                <div className='col-span-3 pt-[20px] px-0 md:pt-0 md:col-span-1 md:px-[20px] bg-[#F5F5F5] shadow-2xl rounded-[10px]'>
                     <h1 className='text-[20px] font-semibold pb-[10px] font-["Poppins"] '>Top Categories </h1>
                     <div className='grid grid-cols-2 gap-[20px]'>
                         {category.map((category,index)=>(
                             
-                            <Link to="/categorized-products" className='flex justify-center items-center border border-[#E6ECF2] p-[18px] rounded-[10px]  hover:bg-[#82B333] duration-500 hover:text-white hover:shadow-2xl '>{category}</Link>
+                            <Link to="/categorized-products" className='flex justify-center items-center border bg-white border-[#E6ECF2] p-[18px] rounded-[10px]  hover:bg-[#82B333] duration-500 hover:text-white hover:shadow-2xl '>{category}</Link>
                         ))}
                     </div>
                 </div>
