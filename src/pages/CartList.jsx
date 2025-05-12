@@ -75,7 +75,7 @@ function CartList() {
             if (result.isConfirmed) {
                 Swal.fire({
                     title: "Deleted!",
-                    text: "Your file has been deleted.",
+                    text: "Product has been removed from cart.",
                     icon: "success"
                 });
                 let idsToRemove = selected.map(index => product[index].id);
