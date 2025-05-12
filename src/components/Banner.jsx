@@ -60,7 +60,10 @@ function Banner() {
                     <div className='grid grid-cols-2 gap-[20px]'>
                         {category.map((category,index)=>(
                             
-                            <Link to="/categorized-products" className='flex justify-center items-center border bg-white border-[#E6ECF2] p-[18px] rounded-[10px]  hover:bg-[#82B333] duration-500 hover:text-white hover:shadow-2xl '>{category}</Link>
+                            <Link 
+                            to="/category"     
+                            state={{ cat:category }}
+                            className='flex justify-center items-center border bg-white border-[#E6ECF2] p-[18px] rounded-[10px]  hover:bg-[#82B333] duration-500 hover:text-white hover:shadow-2xl '>{category}</Link>
                         ))}
                     </div>
                 </div>

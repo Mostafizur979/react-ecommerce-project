@@ -136,6 +136,7 @@ function Header() {
           <div className="flex justify-end px-[10px]"><MdCancel size={30} className="text-red-500" onClick={closeSearch} /></div>
         </div>
         <div ref={scrollRef} className="flex overflow-hidden px-[10px] gap-[10px] scroll-smooth">
+          {/* search box trending products */}
           {product.slice(10).map((prod, index) => (
             <Link
               key={index}
@@ -161,7 +162,7 @@ function Header() {
             </button>
           </div>
         </div>
-        
+        {/* search by input value */}
         <DisplaySearchProduct searchTerm={searchData} productsList={product}/>
 
       </div>
