@@ -35,6 +35,7 @@ function Header() {
   // Inside your component
   const scrollRef = useRef(null);
   const searchRef = useRef(null);
+  const searchRefList = useRef(null);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -63,7 +64,7 @@ function Header() {
     );
 
     return (
-      <div className="w-full h-[250px] p-[10px] overflow-scroll">
+      <div ref={searchRefList} className="w-full h-[250px] p-[10px] overflow-scroll">
         {filteredProducts.map((prod, index) => (
           <Link
             key={index}
@@ -85,6 +86,13 @@ function Header() {
 
   const handleChange = (event) => {
     setSearchData(event.target.value);
+
+    if(event.target.value !=''){
+      scrollRef.current.style.display = "none";
+    }
+    else{
+       scrollRef.current.style.display = "flex";
+    }
   };
 
   return (

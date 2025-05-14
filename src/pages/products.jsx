@@ -1,4 +1,6 @@
 import Header from "../components/Header";
+import ProductsCard from "../components/ProductsCard";
+import Footer from "../components/footer";
 import { useLocation } from "react-router-dom";
 import defaultImg from '../assets/prod-image.jpg';
 import { useState, useEffect, useRef } from 'react'
@@ -9,6 +11,7 @@ import { IoCartOutline } from "react-icons/io5";
 import { ToastContainer, toast } from 'react-toastify';
 function Products() {
     const [product, setProduct] = useState([]);
+    const [products, setProducts] = useState([]);
     const [qty, setQty] = useState(1);
     const location = useLocation();
     const { pid } = location.state || {};
@@ -25,6 +28,21 @@ function Products() {
         };
         getData('https://fakestoreapi.com/products/' + pid);
     }, [pid]);
+
+    useEffect(() => {
+        const getData = (url) => {
+            const xhrAll = new XMLHttpRequest();
+            xhrAll.open('GET', url);
+            xhrAll.onload = () => {
+                const data = JSON.parse(xhrAll.response);
+                setProducts(data);
+                console.log(data);
+            };
+            xhrAll.send();
+        };
+        getData('https://fakestoreapi.com/products/');
+    }, []);
+
     const imageRef = useRef(null);
     const imghandler = (e) => {
         if (imageRef.current) {
@@ -37,9 +55,9 @@ function Products() {
     };
 
     const decreaseQty = () => {
-       if(qty>1){
-         setQty(qty - 1);
-       }
+        if (qty > 1) {
+            setQty(qty - 1);
+        }
     };
 
     const addtocartHandle = () => {
@@ -62,11 +80,11 @@ function Products() {
     return (
         <>
             <Header />
-            <div className="w-[90%] mx-auto grid gap-[20px] grid-cols-3">
+            <div className="w-[90%] mx-auto grid ga-[0px] md:gap-[50px] grid-cols-3">
                 <div className="col-span-3 md:col-span-1">
-                    <img ref={imageRef} src={product.image} className="mx-auto md:mx-0 h-[400px] w-[400px]" />
+                    <img ref={imageRef} src={product.image} className="mx-auto md:mx-0 max-h-[400px] w-[400px]" />
                 </div>
-                <div className="col-span-3 md:col-span-1">
+                <div className="col-span-3 md:col-span-2 lg:col-span-1 ">
                     <p className="pb-[10px] text-[20px] font-['Poppins'] font-semibold text-gray-700">{product.title}</p>
                     <p className="pb-[10px] text-[15px] font-['Poppins'] font-bold text-gray-500">$ {product.price}</p>
                     <div className="flex gap-[10px] pb-[10px]">
@@ -109,8 +127,35 @@ function Products() {
                         </p>
                     </div>
                 </div>
-                 <ToastContainer />
+                <div className="col-span-3 md:col-span-2 lg:col-span-1 ">
+                    <h1 className="2xl:col-span-2 font-['Poppins'] text-[18px] font-semibold text-gray-700">You May Also Like</h1>
+                    <div className="2xl:grid 2xl:grid-cols-2 2xl:gap-[10px]">
+                        {products
+                            .filter(prod => prod.category === product.category && prod.id !== product.id)
+                            .slice(0, 2)
+                            .map((prodSim, index) => (
+                                <ProductsCard key={prodSim.id} product={prodSim} index={index} />
+                            ))}
+
+                    </div>
+                </div>
+                <div className="col-span-3">
+                    <div className="w-full h-[2px] bg-gray-900"></div>
+                    <div className="max-w-[400px] mx-auto font-['Poppins'] text-[18px] text-center font-semibold text-gray-700 bg-white relative lg:top-[-15px] ">People who bought this also buy these</div>
+                    <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
+                        {products
+                            .filter(prod => prod.category === product.category && prod.id !== product.id)
+                            .slice()
+                            .map((prodSim, index) => (
+                                <ProductsCard key={prodSim.id} product={prodSim} index={index} />
+                            ))}
+
+                    </div>
+                </div>
+
+                <ToastContainer />
             </div>
+            <Footer/>
         </>
     )
 }
