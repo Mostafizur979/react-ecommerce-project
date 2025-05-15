@@ -4,36 +4,38 @@ import { Outlet, Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 function Checkout() {
     const location = useLocation();
-    const { pid, Qty } = location.state || {};
-    const [product, setProduct] = useState([]);
+    const { products, qtyObj, subtotal, items } = location.state || {};
     const [inputs, setInputs] = useState({});
-    const [othersInfo, setOthersInfo] = useState("");
     const [flag, setFlag] = useState(true);
-
-    useEffect(() => {
-        const getData = (url) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', url);
-            xhr.onload = () => {
-                const data = JSON.parse(xhr.response);
-                setProduct(data);
-                console.log(data);
-            };
-            xhr.send();
-        };
-        getData('https://fakestoreapi.com/products/' + pid);
-    }, [pid]);
-
     const billing = useRef(null);
+    const chooseCheckout = useRef(null);
+    const navigate = useNavigate();
+    const handleCheckout = () => {
+        if (chooseCheckout.current) {
+            chooseCheckout.current.style.display = "none";
+        }
+        if (billing.current) {
+            billing.current.style.display = "block";
+        }
+    }
+    const handleBackChoose = () => {
+        if (chooseCheckout.current) {
+            chooseCheckout.current.style.display = "block";
+        }
+        if (billing.current) {
+            billing.current.style.display = "none";
+        }
+    }
+
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value }))
     }
-
     const handleSubmit = (event) => {
         event.preventDefault();
 
@@ -56,10 +58,19 @@ function Checkout() {
             setFlag(false);
         }
         else {
+            console.log("Inputs: " + inputs.username + inputs.othersInfo);
             setFlag(true);
-            setInputs(values => ({}));
-            setOthersInfo('');
-            notify();
+            alert("order Submitted")
+            navigate('/confirmation', {
+                state: {
+                    billingInfo: inputs,
+                    products: products,
+                    qtyObj: qtyObj,
+                    subtotal: subtotal,
+                    items: items
+                }
+            });
+
         }
 
     };
@@ -72,34 +83,50 @@ function Checkout() {
                 <h1 className='col-span-2 text-semibold font-["Poppins"] text-center text-[20px] text-gray-900 border-b-[2px] border-gray-300 py-[10px]'>Order Summary</h1>
                 <div className='col-span-2  px-[40px] my-[20px] border-0 md:col-span-1 md:border-r-[1px] border-gray-300'>
                     <h2 className='font-["Poppins"] text-[18px] text-gray-900 border-b-[2px] border-gray-300 py-[10px] px-[10px]'>Finalized Items</h2>
-                    <div className='grid grid-cols-6 gap-[10px]  border-b-[2px] border-gray-300 py-[20px] px-[10px]'>
-                        <img src={product.image} className='h-[60px] w-[60px]' />
-                        <div className='col-span-4'>
-                            <p className='font-["Poppins"] text-[16px] font-semibold text-gray-800 py-[2px]'>{product.title}</p>
-                            <p className='font-["Poppins"] text-[15px] text-gray-600 py-[2px]'>Size: 20</p>
-                            <p className='font-["Poppins"] text-[15px] text-gray-600 py-[2px]'>Qty: {Qty} </p>
-                        </div>
-                        <div>
-                            <p className='font-["Poppins"] text-[16px] font-semibold text-gray-800 py-[2px]'>$ {product.price * Qty}</p>
-                        </div>
+                    {products
+                        .map((product, index) => (
+                            <div className='grid grid-cols-6 gap-[10px]  border-b-[2px] border-gray-300 py-[20px] px-[10px]'>
+                                <img src={product.image} className='h-[60px] w-[60px]' />
+                                <div className='col-span-4'>
+                                    <p className='font-["Poppins"] text-[16px] font-semibold text-gray-800 py-[2px]'>{product.title}</p>
+                                    <p className='font-["Poppins"] text-[15px] text-gray-600 py-[2px]'>Size: 20</p>
+                                    <p className='font-["Poppins"] text-[15px] text-gray-600 py-[2px]'>Qty: {qtyObj.find(q => q.id === product.id)?.qty} </p>
+                                </div>
+                                <div>
+                                    <p className='font-["Poppins"] text-[16px] text-right font-semibold text-gray-800 py-[2px]'>$ {product.price * qtyObj.find(q => q.id === product.id)?.qty}</p>
+                                </div>
 
+                            </div>
+                        ))}
+                    <div className='grid grid-cols-2  py-[20px] px-[10px]'>
+                        <p className='py-[5px] text-[16px] font-["Poppins"] text-gray-700'>Number of Items</p>
+                        <p className='py-[5px] text-[16px] font-["Poppins"] text-right text-gray-700'>{items}</p>
+                        <p className='py-[5px] text-[16px] font-["Poppins"] text-gray-700'>Subtotal</p>
+                        <p className='py-[5px] text-[16px] font-["Poppins"] text-right text-gray-700'>${(subtotal + 0).toFixed(2)}</p>
+                        <p className='py-[5px] text-[16px] font-["Poppins"] text-gray-700 border-b-[2px] border-gray-300'>Estimated Shipping Cost</p>
+                        <p className='py-[5px] text-[16px] font-["Poppins"] text-right text-gray-700 border-b-[2px] border-gray-300'>$0</p>
+                        <p className='py-[5px] text-[16px] font-semibold font-["Poppins"] text-gray-700 border-b-[2px] border-gray-300'>Total</p>
+                        <p className='py-[5px] text-[16px] font-semibold font-["Poppins"] text-right text-gray-700 border-b-[2px] border-gray-300'>${(subtotal + 0).toFixed(2)}</p>
                     </div>
+
                 </div>
                 <div className='p-[20px] col-span-2 md:col-span-1'>
-                    <h1 className='text-[20px] text-gray-800 font-["Poppins"] font-semibold'>Choose How you Would Like To Checkout</h1>
-                    <h3 className='text-[16px] font-["Poppins"] font-semibold pt-[20px]'>Sign in for a faster checkout.</h3>
-                    <h3 className='text-[16px] font-["Poppins"] '>Please choose an option below to place order to complete your purchase!</h3>
-                    <button className='w-full my-[20px] bg-black border border-black rounded-[10px] text-[17px] p-[10px] text-white duration-300 hover:bg-white hover:text-gray-800'>Signin</button>
-                    <div className='w-full my-[10px] relative'>
-                        <p className='w-[80%] mx-auto h-[2px] bg-gray-600'></p>
-                        <p className='w-[40px] bg-white inline text-center absolute top-[-12px] left-[47%]'>Or</p>
+                    <div ref={chooseCheckout} >
+                        <h1 className='text-[20px] text-gray-800 font-["Poppins"] font-semibold'>Choose How you Would Like To Checkout</h1>
+                        <h3 className='text-[16px] font-["Poppins"] font-semibold pt-[20px]'>Sign in for a faster checkout.</h3>
+                        <h3 className='text-[16px] font-["Poppins"] '>Please choose an option below to place order to complete your purchase!</h3>
+                        <button className='w-full my-[20px] bg-black border border-black rounded-[10px] text-[17px] p-[10px] text-white duration-300 hover:bg-white hover:text-gray-800'>Signin</button>
+                        <div className='w-full my-[10px] relative'>
+                            <p className='w-[80%] mx-auto h-[2px] bg-gray-600'></p>
+                            <p className='w-[40px] bg-white inline text-center absolute top-[-12px] left-[47%]'>Or</p>
+                        </div>
+                        <button onClick={handleCheckout} className='w-full my-[20px] bg-black border border-black rounded-[10px] text-[17px] p-[10px] text-white duration-300 hover:bg-white hover:text-gray-800'>Guest Checkout</button>
                     </div>
-                    <button className='w-full my-[20px] bg-black border border-black rounded-[10px] text-[17px] p-[10px] text-white duration-300 hover:bg-white hover:text-gray-800'>Guest Checkout</button>
-                    <div ref={billing} className='py-[20px]'>
+                    <div ref={billing} className='py-[20px] hidden'>
                         <h1 className='text-[20px] text-gray-800 font-["Poppins"] font-semibold pb-[20px]'>Billing Details</h1>
 
                         <form onSubmit={handleSubmit} className=" max-w-[100%] grid sm:grid-cols-1 lg:grid-cols-2 gap-[20px]">
-                            <div>
+                            <div className='col-span-2 md:col-span-1'>
                                 <p className="text-[18px]">Your Name</p>
                                 <input
                                     type="text"
@@ -115,7 +142,7 @@ function Checkout() {
                                     )
                                 }
                             </div>
-                            <div>
+                            <div className='col-span-2 md:col-span-1'>
                                 <p className="text-[18px]">Mobile</p>
                                 <input
                                     type="number"
@@ -150,7 +177,7 @@ function Checkout() {
                                 }
 
                             </div>
-                            <div>
+                            <div className='col-span-2 md:col-span-1'>
                                 <p className="text-[18px]">Upazila</p>
                                 <input
                                     type="text"
@@ -166,7 +193,7 @@ function Checkout() {
                                     )
                                 }
                             </div>
-                            <div>
+                            <div className='col-span-2 md:col-span-1'>
                                 <p className="text-[18px]">District</p>
                                 <input
                                     type="text"
@@ -183,7 +210,7 @@ function Checkout() {
                                 }
                             </div>
 
-                            <div className="lg:col-span-2" >
+                            <div className="col-span-2" >
                                 <p className="text-[18px]">Additional Note</p>
                                 <textarea
                                     name="othersInfo"
@@ -197,7 +224,8 @@ function Checkout() {
                                 }
                             </div>
 
-                            <button type="Submit" className="lg:col-span-2 bg-black border-[2px] text-white text-[18px] p-[10px] rounded-[10px]  duration-300 border-box hover:border-[2px]  hover:bg-white border-black  hover:text-black">Submit</button>
+                            <button type="Submit" className=" bg-black border-[2px] text-white text-[18px] p-[10px] rounded-[10px]  duration-300 border-box hover:border-[2px]  hover:bg-white border-black  hover:text-black">Submit</button>
+                            <button onClick={handleBackChoose} className='border-[2px] text-gray-800 text-[18px] p-[10px] rounded-[10px]  duration-300 border-box hover:border-[2px]  border-black  hover:text-black'>Back</button>
                             {
                                 flag === false && (
                                     <span className="text-red-500">Please fix all issues before submitting this form</span>

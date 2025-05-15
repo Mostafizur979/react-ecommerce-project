@@ -5,42 +5,62 @@ import { FaPlus, FaMinus } from "react-icons/fa6";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { ToastContainer, toast } from 'react-toastify';
 import Swal from 'sweetalert2'
+import { Outlet, Link } from "react-router-dom";
 function CartList() {
     const [product, setProduct] = useState([]);
     const [qtyArr, setQtyArr] = useState([]);
     const [selected, setSelected] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState([]);
     const [selectedProductsLen, setSelectedProductsLen] = useState(0);
     const [subTotal, setSubTotal] = useState(0);
-
-
+    const [qtyObj, setQtyObj] = useState([]);
     useEffect(() => {
         const existingData = JSON.parse(localStorage.getItem("ecommerceCart")) || [];
         setProduct(existingData);
         setQtyArr(existingData.map(() => 1));
+        const initialQtyObj = existingData.map(item => ({
+            id: item.id,
+            qty: 1
+        }));
+        setQtyObj(initialQtyObj);
     }, []);
 
     useEffect(() => {
         const selectedProducts = product.filter((_, index) => selected.includes(index));
         const subtotal = selectedProducts.reduce((sum, p, i) => sum + p.price * qtyArr[selected[i]], 0);
         const selectedLen = selected.reduce((sum, index) => sum + qtyArr[index], 0);
+        setSelectedProduct(selectedProducts);
         setSelectedProductsLen(selectedLen);
         setSubTotal(subtotal);
+        console.log(qtyArr);
+        console.log(selectedProduct);
     }, [selected, qtyArr]);
 
-    const increaseQty = (index) => {
+    const increaseQty = (index, id) => {
         setQtyArr(prevQty => {
             const newQty = [...prevQty];
             newQty[index] += 1;
             return newQty;
         });
+        setQtyObj(prevQtyObj =>
+            prevQtyObj.map(item =>
+                item.id === id ? { ...item, qty: item.qty + 1 } : item
+            )
+        );
+
     };
 
-    const decreaseQty = (index) => {
+    const decreaseQty = (index, id) => {
         setQtyArr(prevQty => {
             const newQty = [...prevQty];
             if (newQty[index] > 1) newQty[index] -= 1;
             return newQty;
         });
+        setQtyObj(prevQtyObj =>
+            prevQtyObj.map(item =>
+                item.id === id ? { ...item, qty: item.qty- 1 } : item
+            )
+        );
     };
 
     const handleCheckboxChange = (index) => {
@@ -53,6 +73,7 @@ function CartList() {
         });
 
     };
+
 
     const allSelectChange = (e) => {
         if (e.target.checked) {
@@ -95,7 +116,7 @@ function CartList() {
             <Header />
             <div className="w-[90%] mx-auto grid grid-cols-3 bg-[#FCFCFC] gap-[10px]">
                 <div className="col-span-3 md:col-span-2">
-                    <div className="w-full grid grid-cols-2 md:grid-cols-2 gap-[10px] bg-white shadow-2xl mb-[10px] items-center p-[10px] rounded-[10px]">
+                    <div className="w-full grid grid-cols-2 md:grid-cols-2 gap-[10px] bg-white shadow-xl mb-[10px] items-center p-[10px] rounded-[10px]">
                         <div className="flex items-center text-[17px] gap-[10px]">
                             <input
                                 type="checkbox"
@@ -110,7 +131,7 @@ function CartList() {
                         </div>
                     </div>
                     {product.map((prod, index) => (
-                        <div key={index} className="w-full grid grid-cols-7 md:grid-cols-6 gap-[10px] bg-white shadow-2xl mb-[10px] items-center p-[10px] rounded-[10px]">
+                        <div key={index} className="w-full grid grid-cols-7 md:grid-cols-6 gap-[10px] bg-white shadow-xl mb-[10px] items-center p-[10px] rounded-[10px]">
                             <div className="col-span-2 md:col-span-1 flex items-center gap-[10px]">
                                 <input
                                     type="checkbox"
@@ -130,18 +151,18 @@ function CartList() {
                             </div>
                             <div className="col-span-6 justify-end md:col-span-1 flex ">
                                 <div className="p-[5px] bg-[#89B23F] border border-r-0 border-[#89B23F] text-[20px] text-white flex justify-center items-center cursor-pointer duration-300 hover:bg-white hover:text-[#89B23F]"
-                                    onClick={() => decreaseQty(index)}
+                                    onClick={() => decreaseQty(index, prod.id)}
                                 ><FaMinus size={16} className="text-white" /></div>
                                 <div className="p-[5px]  w-[40px] text-[15px] border border-[#89B23F] bg-white  text-center">
                                     {qtyArr[index]}</div>
                                 <div className="p-[5px] bg-[#89B23F] border border-l-0 border-[#89B23F] text-[20px] text-white flex justify-center items-center cursor-pointer duration-300 hover:bg-white hover:text-[#89B23F]"
-                                    onClick={() => increaseQty(index)}
+                                    onClick={() => increaseQty(index, prod.id)}
                                 ><FaPlus size={16} /></div>
                             </div>
                         </div>
                     ))}
                 </div>
-                <div className="col-span-3 md:col-span-1 bg-white shadow-2xl h-[200px] p-[10px] rounded-[10px]">
+                <div className="col-span-3 md:col-span-1 bg-white shadow-xl h-[200px] p-[10px] rounded-[10px]">
                     <h1>Order Summary</h1>
                     <div className="grid grid-cols-3">
                         <p className="col-span-2 text-left">Subtotal ({selectedProductsLen} items)</p>
@@ -151,10 +172,16 @@ function CartList() {
                         <p className="col-span-2 mt-[20px] text-left border-t border-[gray]">Total</p>
                         <p className="text-right mt-[20px] border-t border-[gray]">$ {(subTotal + 0).toFixed(2)}</p>
                     </div>
-                    <button className="w-full p-[10px] text-white bg-[#89B23F] mt-[20px] rounded-[10px]">Checkout</button>
+                    <Link
+                        to="/checkout"
+                         state={{ products: selectedProduct, qtyObj: qtyObj, subtotal: subTotal, items: selectedProductsLen  }}
+                    >
+                        <button className="w-full p-[10px] text-white bg-[#89B23F] mt-[20px] rounded-[10px]">Checkout</button>
+                    </Link>
                 </div>
-            </div><br/>
-            <Footer/><br/>
+                <Outlet />
+            </div><br />
+            <Footer /><br />
             <ToastContainer />
         </>
     );

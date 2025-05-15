@@ -121,10 +121,16 @@ function Products() {
                         <Link
                             key={1}
                             to="/checkout"
-                            state={{ pid: product.id, Qty: qty }}
+                            state={{
+                                products: [product],
+                                qtyObj: [{ id: product.id, qty: qty }],
+                                subtotal: qty*product.price,
+                                items: qty
+                            }}
+
                             className=" flex gap-[5px] justify-center items-center p-[10px] w-full bg-[#89B23F] border-2 border-[#89B23F] rounded-[10px] text-[16px] font-['Poppins] text-white hover:bg-white hover:text-[#89B23F]"
                         >
-                            Buy Now <FaChevronRight size={20} />
+                            Checkout<FaChevronRight size={20} />
                         </Link>
 
 
@@ -140,7 +146,7 @@ function Products() {
                 </div>
                 <div className="col-span-3 md:col-span-2 lg:col-span-1 ">
                     <h1 className="2xl:col-span-2 font-['Poppins'] text-[18px] font-semibold text-gray-700">You May Also Like</h1>
-                    <div className="2xl:grid 2xl:grid-cols-2 2xl:gap-[10px]">
+                    <div className="grid grid-cols-2 gap-[10px]">
                         {products
                             .filter(prod => prod.category === product.category && prod.id !== product.id)
                             .slice(0, 2)
@@ -166,7 +172,7 @@ function Products() {
 
                 <ToastContainer />
             </div>
-            <Outlet/>
+            <Outlet />
             <Footer />
         </>
     )

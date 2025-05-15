@@ -14,7 +14,7 @@ function Footer() {
                 </div>
                 <div className="border-r-[1px] border-gray-200 p-[20px] md:p-[40px]">
                     <img src="https://storage.apex4u.com/caa1b470-6545-4ff9-bafa-f1d2db452f0d.svg" className="h-[50px] w-[50px] mx-auto" />
-                    <p className="w-full text-[16px] pb-[10px] text-center font-medium font-['Poppins'] text-gray-900">Fast Delivery</p>
+                    <p className="w-full text-[16px] pb-[10px] text-center font-medium font-['Poppins'] text-gray-900">Super Deals</p>
                     <p className="w-full text-[14px] text-center font-['Poppins'] text-gray-700 ">Get fast and hassle-free delivery of your orders to your doorstep. Ensuring a seamless and hassle-free experience</p>
                 </div>
                 <div className="border-r-[1px] border-gray-200 p-[20px] md:p-[40px]">
