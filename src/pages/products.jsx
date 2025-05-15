@@ -9,12 +9,14 @@ import { FaRegStar, FaChevronRight } from "react-icons/fa";
 import { MdOutlineDescription } from "react-icons/md";
 import { IoCartOutline } from "react-icons/io5";
 import { ToastContainer, toast } from 'react-toastify';
+import { Outlet, Link } from "react-router-dom";
 function Products() {
     const [product, setProduct] = useState([]);
     const [products, setProducts] = useState([]);
     const [qty, setQty] = useState(1);
     const location = useLocation();
     const { pid } = location.state || {};
+
     useEffect(() => {
         const getData = (url) => {
             const xhr = new XMLHttpRequest();
@@ -116,7 +118,16 @@ function Products() {
                         <p className="flex"><span className="font-semibold flex items-center gap-[5px] pr-[5px]"><FaRegStar size={18} /> Rated: </span> 90  people rated this product. </p>
                     </div>
                     <div className="grid grid-cols-2 gap-[10px] mt-[20px]">
-                        <button className=" flex gap-[5px] justify-center items-center p-[10px] w-full bg-[#89B23F] border-2 border-[#89B23F] rounded-[10px] text-[16px] font-['Poppins] text-white hover:bg-white hover:text-[#89B23F]">Buy Now <FaChevronRight size={20} /></button>
+                        <Link
+                            key={1}
+                            to="/checkout"
+                            state={{ pid: product.id, Qty: qty }}
+                            className=" flex gap-[5px] justify-center items-center p-[10px] w-full bg-[#89B23F] border-2 border-[#89B23F] rounded-[10px] text-[16px] font-['Poppins] text-white hover:bg-white hover:text-[#89B23F]"
+                        >
+                            Buy Now <FaChevronRight size={20} />
+                        </Link>
+
+
                         <button onClick={addtocartHandle}
                             className=" flex gap-[5px] justify-center p-[10px] w-full border-2 border-gray-600 rounded-[10px] text-[16px] font-['Poppins'] text-gray-700 hover:bg-[#89B23F] hover:text-white hover:border-[#89B23F]">Add To Cart <IoCartOutline size={20} /></button>
                     </div>
@@ -155,7 +166,8 @@ function Products() {
 
                 <ToastContainer />
             </div>
-            <Footer/>
+            <Outlet/>
+            <Footer />
         </>
     )
 }
