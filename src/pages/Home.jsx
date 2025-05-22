@@ -27,7 +27,7 @@ function Home() {
       <Banner />
       <br/>
       <h1 className='text-[20px]  font-["Poppins"] font-semibold w-[90%] mx-auto'>Just For You</h1>
-      <div className='max-w-[90%] grid grid-cols-2  md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-7 gap-4 mx-auto '>
+      <div className='max-w-[90%] grid grid-cols-2  md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-6 mt-2 mx-auto '>
         {product.slice(10).map((product, index) => (
           <ProductsCard key={product.id} product={product} index={index} />
         ))}

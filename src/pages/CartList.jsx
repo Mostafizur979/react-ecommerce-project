@@ -116,7 +116,7 @@ function CartList() {
             <Header />
             <div className="w-[90%] mx-auto grid grid-cols-3 bg-[#FCFCFC] gap-[10px]">
                 <div className="col-span-3 md:col-span-2">
-                    <div className="w-full grid grid-cols-2 md:grid-cols-2 gap-[10px] bg-white shadow-xl mb-[10px] items-center p-[10px] rounded-[10px]">
+                    <div className="w-full grid grid-cols-2 md:grid-cols-2 gap-[10px] bg-white shadow mb-[10px] items-center p-[10px] rounded-[10px]">
                         <div className="flex items-center text-[17px] gap-[10px]">
                             <input
                                 type="checkbox"
@@ -131,7 +131,7 @@ function CartList() {
                         </div>
                     </div>
                     {product.map((prod, index) => (
-                        <div key={index} className="w-full grid grid-cols-7 md:grid-cols-6 gap-[10px] bg-white shadow-xl mb-[10px] items-center p-[10px] rounded-[10px]">
+                        <div key={index} className="w-full grid grid-cols-7 md:grid-cols-6 gap-[10px] bg-white shadow mb-[10px] items-center p-[10px] rounded-[10px]">
                             <div className="col-span-2 md:col-span-1 flex items-center gap-[10px]">
                                 <input
                                     type="checkbox"
@@ -162,7 +162,7 @@ function CartList() {
                         </div>
                     ))}
                 </div>
-                <div className="col-span-3 md:col-span-1 bg-white shadow-xl h-[200px] p-[10px] rounded-[10px]">
+                <div className="col-span-3 md:col-span-1 bg-white shadow h-[200px] p-[10px] rounded-[10px]">
                     <h1>Order Summary</h1>
                     <div className="grid grid-cols-3">
                         <p className="col-span-2 text-left">Subtotal ({selectedProductsLen} items)</p>
